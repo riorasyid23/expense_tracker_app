@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "\$",
+                        "Rp. ",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight(300),
@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       Text(
-                        "100",
+                        formatMoney(expenseProvider.getTotalExpenses(), showSymbol: false),
                         style: AppTextStyles.amountValue,
                       )
                     ],

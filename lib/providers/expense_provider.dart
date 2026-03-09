@@ -42,5 +42,13 @@ class ExpenseProvider extends ChangeNotifier {
      notifyListeners();
   }
 
+  double getTotalExpenses() {
+    double total = 0;
+    for(var expense in _expenses){
+      total += expense.amount;
+    }
+    // print("Total Expenses: $total");
+    return total;
+  }
 
 }

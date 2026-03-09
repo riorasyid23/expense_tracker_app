@@ -53,8 +53,8 @@ class ExpenseCard extends StatelessWidget {
 }
 
 // function to format money (50000.00 => 50,000)
-String formatMoney(double amount) {
-  final formatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp. ', decimalDigits: 0);
+String formatMoney(double amount, { bool showSymbol = true }) {
+  final formatter = NumberFormat.currency(locale: 'id_ID', symbol: showSymbol ? 'Rp. ' : '', decimalDigits: 0);
   return formatter.format(amount);
 }
 
