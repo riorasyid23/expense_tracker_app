@@ -1,6 +1,7 @@
 // import 'package:expense_tracker/data/models/expense_category.dart';
 import 'package:expense_tracker/theme/app_button.dart';
 import 'package:expense_tracker/theme/app_text_styles.dart';
+import 'package:expense_tracker/widgets/expense_card.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/widgets/custom_appbar.dart';
 import 'package:expense_tracker/widgets/custom_bottom_navbar.dart';
@@ -18,15 +19,130 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ExpenseMockEngine expensesEngine = ExpenseMockEngine();
+  double expenseAmount = 0;
+  DateTime _selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  DateTime get combinedDateTime => DateTime(
+    _selectedDate.year,
+    _selectedDate.month,
+    _selectedDate.day,
+    selectedTime.hour,
+    selectedTime.minute,
+  );
+  bool isAmountValid = false;
+  final amountInputController = TextEditingController();
+
+  // Date Picker FUnction
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2023, 1, 1),
+      lastDate: DateTime.now(),
+      helpText: "Select Expense Date",
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.blueAccent,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            dialogBackgroundColor: Color(0xFF101922),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      final TimeOfDay? time = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        helpText: "Select Expense Time",
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: Colors.blueAccent,
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Color(0xFF101922),
+            ),
+            child: child!,
+          );
+        },
+      );
+
+      if (time != null) {
+        DateTime combinedDateTime = DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          time.hour,
+          time.minute,
+        );
+        setState(() {
+          _selectedDate = combinedDateTime;
+          selectedTime = time;
+        });
+        print("Selected Date & Time: ${combinedDateTime.toLocal()}");
+      } 
+      setState(() {
+        _selectedDate = picked;
+      });
+      print("Selected Date: ${picked.toLocal()}");
+    } else {
+      print("Date selection cancelled.");
+    }
+  }
+
+  // Time Picker Function
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      helpText: "Select Expense Time",
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.blueAccent,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+            dialogBackgroundColor: Color(0xFF101922),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      DateTime combinedDateTime = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        picked.hour,
+        picked.minute,
+      );
+      setState(() {
+        _selectedDate = combinedDateTime;
+        selectedTime = picked;
+      });
+      print("Selected Date & Time: ${combinedDateTime.toLocal()}");
+    } else {
+      print("Time selection cancelled.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final expenseProvider = context.watch<ExpenseProvider>();
-    int expenseAmount = expenseProvider.amount;
-    bool isAmountValid = expenseProvider.isAmountValid;
 
     // final amountInputController = TextEditingController(text: expenseAmount > 0 ? expenseAmount.toString() : "");
-    final amountInputController = TextEditingController(text: expenseAmount > 0 ? expenseAmount.toString() : "");
 
     return Scaffold(
       backgroundColor: Color(0xFF101922),
@@ -106,11 +222,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: InkWell(
                                     onTap: () {
                                       context.read<ExpenseProvider>().selectCategory(expense.expenseType);
-                                      print(expenseProvider.selectedCategory);
-                                      // setState(() {
-                                      //   expensesEngine.selectCategory(expense.expenseType);
-                                      //   // print("${expense.expenseType} - ${expense.iconActive}");
-                                      // });
                                     },
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -146,14 +257,79 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              spacing: 8,
+                              children: [
+                                // Date Button
+                                Expanded(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      alignment: Alignment(
+                                        -1, 0
+                                      ),
+                                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        side: BorderSide(
+                                          color: Colors.white,
+                                          width: 0.5,
+                                          style: BorderStyle.solid
+                                        )
+                                      )
+                                    ),
+                                    onPressed: () {
+                                      _selectDate(context);
+                                    },
+                                    child: Text(
+                                      formatDate(combinedDateTime),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.white54
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Time Button
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                    // backgroundColor: Colors.white10,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                        color: Colors.white,
+                                        width: 0.5,
+                                        style: BorderStyle.solid
+                                      )
+                                    )
+                                  ),
+                                  onPressed: () {
+                                    _selectTime(context);
+                                  },
+                                  child: Text(
+                                    formatTimeHour(combinedDateTime),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.white54
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ),
+
+                          Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                             child: TextField(
                               controller: amountInputController,
                               cursorColor: Colors.white,
                               onChanged: (value) => {
-                                expenseAmount = int.tryParse(value) ?? 0,
-                                context.read<ExpenseProvider>().setAmount(expenseAmount),
-                                print("Expense Amount: $expenseAmount - Valid: ${context.read<ExpenseProvider>().isAmountValid}")
+                                setState(() {
+                                  expenseAmount = double.tryParse(value) ?? 0;
+                                  isAmountValid = expenseAmount > 0;
+                                })
                               },
                               keyboardType: TextInputType.number,
                               style: TextStyle(
@@ -184,7 +360,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               
                               ),
                             ),
-                          )
+                          ),
+
+                          
                         ],
                       ),
                       ElevatedButton(
@@ -192,26 +370,38 @@ class _HomeScreenState extends State<HomeScreen> {
                           context.read<ExpenseProvider>().addExpense(
                             Expense(
                               id: generateSimpleId(),
-                              amount: expenseAmount.toDouble(),
+                              amount: expenseAmount,
                               expenseType: expenseProvider.selectedCategory ?? "Other",
-                              expenseDate: DateTime.now(),
+                              expenseDate: _selectedDate,
                             ),
                           );
 
-                          amountInputController.clear();
 
                           showDialog(context: context, builder: (BuildContext context){
                             return AlertDialog(
                               title: Text("Success"),
                               content: Text("Expense added successfully!"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("OK"),
+                                )
+                              ],
 
                             );
                           });
+                          setState(() {
+                            expenseAmount = 0;
+                            isAmountValid = false;
+                            _selectedDate = DateTime.now();
+                            selectedTime = TimeOfDay.now();
+                          });
 
-                          print("Expense Added: Amount - $expenseAmount, Category - ${expenseProvider.selectedCategory}");
-                          // expenseAmount = 0;
+                          amountInputController.clear();
 
-                        } : () {print("Invalid amount");},
+                        } : null,
                         style: isAmountValid ? AppButtonStyles.primaryButton : AppButtonStyles.primaryDisabledButton,
                         child: Text(
                           "+ Add Expense",
@@ -235,3 +425,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

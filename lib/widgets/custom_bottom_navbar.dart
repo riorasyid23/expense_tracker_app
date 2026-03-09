@@ -33,7 +33,7 @@ class CustomBottomNavbar extends StatelessWidget implements PreferredSizeWidget 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.only(top: 8, bottom: 16),
       decoration: const BoxDecoration(
         color: Color(0xFF172533),
         border: Border(top: BorderSide(
@@ -43,10 +43,10 @@ class CustomBottomNavbar extends StatelessWidget implements PreferredSizeWidget 
       ),
       child: SafeArea(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: NavbarItemList.items.map((item) {
             bool isActive = item.route == pageRoute;
-            return GestureDetector(
+            return InkWell(
               onTap: () {
                 if(item.route != pageRoute){
                   Navigator.pushReplacementNamed(context, item.route);
