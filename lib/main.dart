@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:expense_tracker/screens/home_screen.dart';
 import 'package:expense_tracker/screens/history_screen.dart';
 import 'package:expense_tracker/screens/overview_screen.dart';
+// import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  // debugPaintSizeEnabled = true;
   runApp(
     ChangeNotifierProvider(
       create: (_) => ExpenseProvider(),

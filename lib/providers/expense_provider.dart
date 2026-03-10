@@ -1,4 +1,6 @@
+// import 'package:expense_tracker/data/mocks/mock_categories.dart';
 import 'package:expense_tracker/data/models/expense_category.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import '../data/models/expense.dart';
 
@@ -8,6 +10,7 @@ class ExpenseProvider extends ChangeNotifier {
   int get amount => _amount;
   bool get isAmountValid => _amount > 0;
 
+  // final List<Expense> _expenses = generateMockExpenseData();
   final List<Expense> _expenses = [];
   final List<ExpenseCategory> _expenseCategories = [
     ExpenseCategory(expenseType: "Food", iconActive: false, iconData: Icons.restaurant, color: Colors.orangeAccent),
@@ -24,7 +27,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   void setAmount(int amount) {
     _amount = amount;
-    print(_amount);
+    debugPrint(_amount.toString());
     notifyListeners();
   }
 
@@ -50,5 +53,57 @@ class ExpenseProvider extends ChangeNotifier {
     // print("Total Expenses: $total");
     return total;
   }
+
+  List<PieChartSectionData> getSections(int touchedIndex) {
+
+    // 1. Get summed totals per category
+    final Map<String, double> totals = {};
+    double totalAll = 0;
+    for (var e in expenses) {
+      totals.update(e.expenseType, (v) => v + e.amount, ifAbsent: () => e.amount);
+      totalAll += e.amount;
+    }
+
+    // 2. Sort and take Top 3
+    var sortedEntries = totals.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    
+    var top3 = sortedEntries.take(3).toList();
+    
+    // 3. Calculate "Others"
+    double top3Sum = top3.fold(0, (sum, entry) => sum + entry.value);
+    double othersSum = totalAll - top3Sum;
+
+    // 4. Map to PieChartSectionData
+    List<Color> colors = [Colors.blue, Colors.purple, Colors.orange, Colors.grey];
+    
+    List<PieChartSectionData> sections = top3.asMap().entries.map((entry) {
+      int idx = entry.key;
+      var data = entry.value;
+      final isTouched = entry.key == touchedIndex;
+      final double fontSize = isTouched ? 18 : 14;
+      final double radius = isTouched ? 70 : 60;
+      return PieChartSectionData(
+        titleStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.white),
+        title: data.key,
+        value: data.value,
+        color: colors[idx],
+        radius: radius,
+      );
+    }).toList();
+
+    // Add "Others" section if it exists
+    if (othersSum > 0) {
+      sections.add(PieChartSectionData(
+        title: "Others",
+        value: othersSum,
+        color: colors.last,
+        radius: 60,
+      ));
+    }
+
+    return sections;
+  }
+
 
 }
