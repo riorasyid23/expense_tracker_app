@@ -73,8 +73,9 @@ class ExpenseProvider extends ChangeNotifier {
       var data = entry.value;
       final isTouched = entry.key == touchedIndex;
       final double fontSize = isTouched ? 12 : 8;
-      final double radius = isTouched ? 65 : 55;
+      final double radius = isTouched ? 50 : 40;
       return PieChartSectionData(
+        // titlePositionPercentageOffset: 12,
         titleStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.white),
         title: isTouched ? formatMoney(data.value) : "",
         value: data.value,
@@ -91,7 +92,7 @@ class ExpenseProvider extends ChangeNotifier {
             style: TextStyle(fontSize: 10, color: Colors.white),
           ),
         ),
-        badgePositionPercentageOffset: radius/43,
+        badgePositionPercentageOffset: radius/30,
         
       );
     }).toList();
