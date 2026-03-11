@@ -60,8 +60,6 @@ class _OverviewScreenState extends State<OverviewScreen> {
                   aspectRatio: 1,
 
                   child: PieChart(
-                    duration: Duration(milliseconds: 500),
-                    curve: Curves.bounceInOut,
                     PieChartData(
                       pieTouchData: PieTouchData(
 
