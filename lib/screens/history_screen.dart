@@ -56,11 +56,40 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: Visibility(
           visible: expenses.isNotEmpty,
           replacement: Center(
-            child: Text(
-              "No expenses recorded yet.",
-              style: AppTextStyles.txtSm.copyWith(
-                color: Colors.white54,
-                fontWeight: FontWeight.w300
+            // child: Text(
+            //   "No expenses recorded yet.",
+            //   style: AppTextStyles.txtSm.copyWith(
+            //     color: Colors.white54,
+            //     fontWeight: FontWeight.w300
+            //   ),
+            // ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.textPrimary.withOpacity(0.1),
+                  width: 0.5
+                )
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.history,
+                    size: 48,
+                    color: Colors.white54,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "No expenses recorded yet.",
+                    style: AppTextStyles.txtSm.copyWith(
+                      color: Colors.white54,
+                      fontWeight: FontWeight.w300
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

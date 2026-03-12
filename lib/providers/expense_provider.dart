@@ -13,6 +13,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   // final List<Expense> _expenses = generateMockExpenseData();
   final List<Expense> _expenses = [];
+  final List<Expense> _filteredExpenses = [];
   final List<ExpenseTopCategories> _topCategories = [];
   final List<ExpenseCategory> _expenseCategories = [
     ExpenseCategory(expenseType: "Food", iconActive: false, iconData: Icons.restaurant, color: Colors.orangeAccent),
@@ -25,6 +26,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   String? get selectedCategory => _selectedCategory;
   List<Expense> get expenses => _expenses;
+  List<Expense> get filteredExpenses => _filteredExpenses;
   List<ExpenseCategory> get expenseCategories => _expenseCategories;
   List<ExpenseTopCategories> get topCategories => _topCategories;
 
@@ -64,7 +66,11 @@ class ExpenseProvider extends ChangeNotifier {
     return total;
   }
 
-  List<PieChartSectionData> getSections(int touchedIndex) {
+  List<PieChartSectionData> getSections(int touchedIndex, int month) {
+    // Filter expenses by month
+    List<Expense> expenses = _expenses.where((e) => e.expenseDate.month == month).toList();
+    _filteredExpenses.clear();
+    _filteredExpenses.addAll(expenses);
 
     final Map<String, double> totals = {};
     for (var e in expenses) {
