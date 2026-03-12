@@ -66,7 +66,7 @@ List<Expense> generateMockExpenseData(){
       id: generateSimpleId(),
       amount: expenseAmounts[random.nextInt(expenseAmounts.length)],
       expenseType: expenseCategories[random.nextInt(expenseCategories.length)],
-      expenseDate: getRandomDate()
+      expenseDate: getRandomDate(),
     )
   );
 }

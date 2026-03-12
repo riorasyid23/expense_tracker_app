@@ -13,6 +13,7 @@ class ExpenseProvider extends ChangeNotifier {
 
   // final List<Expense> _expenses = generateMockExpenseData();
   final List<Expense> _expenses = [];
+  final List<ExpenseTopCategories> _topCategories = [];
   final List<ExpenseCategory> _expenseCategories = [
     ExpenseCategory(expenseType: "Food", iconActive: false, iconData: Icons.restaurant, color: Colors.orangeAccent),
     ExpenseCategory(expenseType: "Travel", iconActive: false, iconData: Icons.flight, color: Colors.blueAccent),
@@ -25,6 +26,7 @@ class ExpenseProvider extends ChangeNotifier {
   String? get selectedCategory => _selectedCategory;
   List<Expense> get expenses => _expenses;
   List<ExpenseCategory> get expenseCategories => _expenseCategories;
+  List<ExpenseTopCategories> get topCategories => _topCategories;
 
   void setAmount(int amount) {
     _amount = amount;
@@ -33,7 +35,14 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   void addExpense(Expense expense) {
-    _expenses.add(expense);
+    _expenses.add(
+      Expense(
+        id: expense.id,
+        amount: expense.amount,
+        expenseType: expense.expenseType,
+        expenseDate: expense.expenseDate,
+      )
+    );
     _amount = 0;
     notifyListeners();
   }
@@ -75,7 +84,6 @@ class ExpenseProvider extends ChangeNotifier {
       final double fontSize = isTouched ? 12 : 8;
       final double radius = isTouched ? 50 : 40;
       return PieChartSectionData(
-        // titlePositionPercentageOffset: 12,
         titleStyle: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.white),
         title: isTouched ? formatMoney(data.value) : "",
         value: data.value,
@@ -100,5 +108,29 @@ class ExpenseProvider extends ChangeNotifier {
     return sections;
   }
 
+  List<ExpenseTopCategories> getTopThreeExpenses() {
+    final totalExpenses = getTotalExpenses();
+    List<Expense> sortedExpenses = List.from(_expenses);
+    List<ExpenseTopCategories> topCategories = [];
 
+    // Sum up total amount per category
+    final Map<String, double> categoryTotals = {};
+    for (var expense in sortedExpenses) {
+      categoryTotals.update(expense.expenseType, (v) => v + expense.amount, ifAbsent: () => expense.amount);
+    }
+
+    var sortedEntries = categoryTotals.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    for (var entry in sortedEntries.take(3)) {
+      topCategories.add(ExpenseTopCategories(
+        id: entry.key,
+        expenseType: entry.key,
+        totalAmount: entry.value,
+        percentage: totalExpenses > 0 ? (entry.value / totalExpenses) : 0
+      ));
+    }
+
+    return topCategories;
+  }
 }

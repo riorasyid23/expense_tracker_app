@@ -66,7 +66,7 @@ String formatTimeHour(DateTime date) {
   return DateFormat.jm().format(date);
 }
 
-Widget iconCategoryBuilder(String expenseType, List<ExpenseCategory> category) {
+Widget iconCategoryBuilder(String expenseType, List<ExpenseCategory> category, { bool forTopCategories = false }) {
 
   Map<String, ExpenseCategory> categoryMap = {
     for (var cat in category) cat.expenseType: cat
@@ -78,13 +78,13 @@ Widget iconCategoryBuilder(String expenseType, List<ExpenseCategory> category) {
     width: 32,
     height: 32,
     decoration: BoxDecoration(
-      color: item?.color.withOpacity(0.1),
+      color: forTopCategories ? Colors.blue.withOpacity(0.1) : item?.color.withOpacity(0.1),
       shape: BoxShape.rectangle,
       borderRadius: BorderRadius.circular(8)
     ),
     child: Icon(
       item?.iconData,
-      color: item?.color,
+      color: forTopCategories ? Colors.blue : item?.color,
       size: 14,
     ),
   );
