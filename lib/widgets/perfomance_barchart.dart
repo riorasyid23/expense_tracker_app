@@ -1,10 +1,20 @@
+import 'package:expense_tracker/data/models/expense.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/theme/app_colors.dart';
 import 'package:expense_tracker/theme/app_text_styles.dart';
 
 class PerfomanceBarchart extends StatelessWidget {
-  const PerfomanceBarchart({super.key});
+  final List<ExpenseWeeklyPerfomance> expenseWeeklyPerfomance;
+  final double highestWeeklyExpense;
+  final double monthlyGrowth;
+
+  const PerfomanceBarchart({
+    super.key,
+    required this.expenseWeeklyPerfomance,
+    required this.highestWeeklyExpense,
+    required this.monthlyGrowth
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +43,7 @@ class PerfomanceBarchart extends StatelessWidget {
               TextButton(
                 onPressed: () {},
                 child: Text(
-                  "~12% vs last month",
+                  "~$monthlyGrowth% vs last month",
                   style: AppTextStyles.txtXs,
                 ),
               )
@@ -46,13 +56,13 @@ class PerfomanceBarchart extends StatelessWidget {
               BarChartData(
                 
                 borderData: FlBorderData(show: false),
-                maxY: 10,
-                barGroups: [
-                  BarChartGroupData(
-                    x: 0,
+                maxY: highestWeeklyExpense,
+                barGroups: expenseWeeklyPerfomance.map((e) {
+                  return BarChartGroupData(
+                    x: e.weekNumber,
                     barRods: [
                       BarChartRodData(
-                        toY: 8,
+                        toY: e.weeklyAmount,
                         color: Colors.orange,
                         width: 20,
                         borderRadius: BorderRadius.only(
@@ -61,53 +71,69 @@ class PerfomanceBarchart extends StatelessWidget {
                         )
                       )
                     ]
-                  ),
+                  );
+                }).toList(),
+                // barGroups: [
+                //   BarChartGroupData(
+                //     x: 0,
+                //     barRods: [
+                //       BarChartRodData(
+                //         toY: 8,
+                        // color: Colors.orange,
+                        // width: 20,
+                        // borderRadius: BorderRadius.only(
+                        //   topLeft: Radius.circular(24),
+                        //   topRight: Radius.circular(24)
+                        // )
+                //       )
+                //     ]
+                //   ),
 
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        toY: 8,
-                        color: Colors.orange,
-                        width: 20,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24)
-                        )
-                      )
-                    ]
-                  ),
+                //   BarChartGroupData(
+                //     x: 0,
+                //     barRods: [
+                //       BarChartRodData(
+                //         toY: 8,
+                //         color: Colors.orange,
+                //         width: 20,
+                //         borderRadius: BorderRadius.only(
+                //           topLeft: Radius.circular(24),
+                //           topRight: Radius.circular(24)
+                //         )
+                //       )
+                //     ]
+                //   ),
 
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        toY: 8,
-                        color: Colors.orange,
-                        width: 20,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24)
-                        )
-                      )
-                    ]
-                  ),
+                //   BarChartGroupData(
+                //     x: 0,
+                //     barRods: [
+                //       BarChartRodData(
+                //         toY: 8,
+                //         color: Colors.orange,
+                //         width: 20,
+                //         borderRadius: BorderRadius.only(
+                //           topLeft: Radius.circular(24),
+                //           topRight: Radius.circular(24)
+                //         )
+                //       )
+                //     ]
+                //   ),
 
-                  BarChartGroupData(
-                    x: 3,
-                    barRods: [
-                      BarChartRodData(
-                        toY: 8,
-                        color: Colors.orange,
-                        width: 20,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24)
-                        )
-                      )
-                    ]
-                  ),
-                ],
+                //   BarChartGroupData(
+                //     x: 3,
+                //     barRods: [
+                //       BarChartRodData(
+                //         toY: 8,
+                //         color: Colors.orange,
+                //         width: 20,
+                //         borderRadius: BorderRadius.only(
+                //           topLeft: Radius.circular(24),
+                //           topRight: Radius.circular(24)
+                //         )
+                //       )
+                //     ]
+                //   ),
+                // ],
                 titlesData: FlTitlesData(
                   show: true,
                   bottomTitles: AxisTitles(
@@ -117,17 +143,17 @@ class PerfomanceBarchart extends StatelessWidget {
                         const style = AppTextStyles.amountLabel;
                         Widget text;
                         switch (value.toInt()) {
-                          case 0:
-                            text = const Text('Mon', style: style);
-                            break;
                           case 1:
-                            text = const Text('Tue', style: style);
+                            text = const Text('W1', style: style);
                             break;
                           case 2:
-                            text = const Text('Wed', style: style);
+                            text = const Text('W2', style: style);
                             break;
                           case 3:
-                            text = const Text('Thu', style: style);
+                            text = const Text('W3', style: style);
+                            break;
+                          case 4:
+                            text = const Text('W4', style: style);
                             break;
                           default:
                             text = const Text('', style: style);

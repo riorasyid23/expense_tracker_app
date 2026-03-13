@@ -30,6 +30,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
     final expenseProvider = context.watch<ExpenseProvider>();
     final pieChartSections = expenseProvider.getSections(touchedIndex, int.parse(_selectedMonth ?? "1"));
     final topExpenses = expenseProvider.getTopThreeExpenses();
+    final expenseWeeklyPerfomance = expenseProvider.getWeeklyPerformance(int.parse(_selectedMonth ?? "1"));
+    final highestWeeklyExpense = expenseWeeklyPerfomance.reduce((a, b) => 
+    a.weeklyAmount > b.weeklyAmount ? a : b);
+    final monthlyGrowth = expenseProvider.monthlyGrowth;
+
     
     return Scaffold(
       appBar: CustomQuickExpenseAppBar(pageRoute: "/overview"),
@@ -256,7 +261,11 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     ],
                   ),
                 ),
-                child: PerfomanceBarchart()
+                child: PerfomanceBarchart(
+                  expenseWeeklyPerfomance: expenseWeeklyPerfomance,
+                  highestWeeklyExpense: highestWeeklyExpense.weeklyAmount,
+                  monthlyGrowth: expenseProvider.monthlyGrowth,
+                )
               )
             ],
           ),

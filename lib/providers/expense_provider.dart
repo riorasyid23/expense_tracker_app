@@ -10,11 +10,14 @@ class ExpenseProvider extends ChangeNotifier {
   int _amount = 0;
   int get amount => _amount;
   bool get isAmountValid => _amount > 0;
+  double _monthlyGrowth = 0;
+  double get monthlyGrowth => _monthlyGrowth;
 
   // final List<Expense> _expenses = generateMockExpenseData();
   final List<Expense> _expenses = [];
   final List<Expense> _filteredExpenses = [];
   final List<ExpenseTopCategories> _topCategories = [];
+  final List<ExpenseWeeklyPerfomance> _expenseWeeklyPerfomance = [];
   final List<ExpenseCategory> _expenseCategories = [
     ExpenseCategory(expenseType: "Food", iconActive: false, iconData: Icons.restaurant, color: Colors.orangeAccent),
     ExpenseCategory(expenseType: "Travel", iconActive: false, iconData: Icons.flight, color: Colors.blueAccent),
@@ -27,6 +30,7 @@ class ExpenseProvider extends ChangeNotifier {
   String? get selectedCategory => _selectedCategory;
   List<Expense> get expenses => _expenses;
   List<Expense> get filteredExpenses => _filteredExpenses;
+  List<ExpenseWeeklyPerfomance> get expenseWeeklyPerfomance => _expenseWeeklyPerfomance; 
   List<ExpenseCategory> get expenseCategories => _expenseCategories;
   List<ExpenseTopCategories> get topCategories => _topCategories;
 
@@ -57,12 +61,23 @@ class ExpenseProvider extends ChangeNotifier {
      notifyListeners();
   }
 
-  double getTotalExpenses() {
+  double getTotalExpenses({int? currentMonth = 0}) {
     double total = 0;
+
+    if(currentMonth != 0) {
+      final List<Expense> currMo = expenses.where((expense) => expense.expenseDate.month == currentMonth).toList();
+      for(var expense in currMo){
+        total += expense.amount;
+      }
+
+      return total;
+      // notifyListeners()
+    }
+
+
     for(var expense in _expenses){
       total += expense.amount;
     }
-    // print("Total Expenses: $total");
     return total;
   }
 
@@ -111,6 +126,8 @@ class ExpenseProvider extends ChangeNotifier {
       );
     }).toList();
 
+    getMonthlyGrowth();
+
     return sections;
   }
 
@@ -138,5 +155,55 @@ class ExpenseProvider extends ChangeNotifier {
     }
 
     return topCategories;
+  }
+
+  List<ExpenseWeeklyPerfomance> getWeeklyPerformance(int monthNumber) {
+    final int currentYear = DateTime.now().year;
+    
+
+    // Map<String, dynamic> finalResult = {
+    //   "weeklyPerfomanceData": {},
+    //   "growth": expenseGrowth
+    // };
+
+    // 1. Initialize a map for exactly 4 weeks with 0.0 amount
+    Map<int, double> weeklyMap = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0};
+
+    // 2. Filter expenses for the specific month/year and aggregate
+    for (var expense in expenses) {
+      if (expense.expenseDate.month == monthNumber && 
+          expense.expenseDate.year == currentYear) {
+        
+        // Calculate week (1-4) based on day of month
+        int week = ((expense.expenseDate.day - 1) ~/ 7) + 1;
+        if (week > 4) week = 4; // Ensure days 29-31 stay in week 4
+
+        weeklyMap[week] = (weeklyMap[week] ?? 0.0) + expense.amount;
+      }
+    }
+
+    return weeklyMap.entries
+        .map((entry) => ExpenseWeeklyPerfomance(
+              weekNumber: entry.key,
+              weeklyAmount: entry.value,
+            ))
+        .toList();
+
+    // finalResult["weeklyPerfomanceData"] = result;
+    // 3. Map the results to your performance model
+    // return finalResult;
+  }
+
+  void getMonthlyGrowth(){
+    final double currrentMonthExpense = getTotalExpenses(currentMonth: DateTime.now().month);
+    final double lastMonthExpense = getTotalExpenses(currentMonth: DateTime.now().month - 1);
+    double expenseGrowth = 0;
+
+    if(lastMonthExpense != 0){
+      expenseGrowth = ((currrentMonthExpense - lastMonthExpense) / lastMonthExpense) * 100;
+    }
+
+    _monthlyGrowth = expenseGrowth;
+    notifyListeners();
   }
 }
