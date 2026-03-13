@@ -49,7 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
               surface: Colors.white,
               onSurface: Colors.black,
             ),
-            dialogBackgroundColor: Color(0xFF101922),
+            dialogTheme: DialogThemeData(
+              backgroundColor: Color(0xFF101922),
+            )
           ),
           child: child!,
         );
@@ -69,7 +71,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 surface: Colors.white,
                 onSurface: Colors.black,
               ),
-              dialogBackgroundColor: Color(0xFF101922),
+              dialogTheme: DialogThemeData(
+                backgroundColor: Color(0xFF101922),
+              )
             ),
             child: child!,
           );
@@ -88,14 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
           _selectedDate = combinedDateTime;
           selectedTime = time;
         });
-        print("Selected Date & Time: ${combinedDateTime.toLocal()}");
+        debugPrint("Selected Date & Time: ${combinedDateTime.toLocal()}");
       } 
       setState(() {
         _selectedDate = picked;
       });
-      print("Selected Date: ${picked.toLocal()}");
+      debugPrint("Selected Date: ${picked.toLocal()}");
     } else {
-      print("Date selection cancelled.");
+      debugPrint("Date selection cancelled.");
     }
   }
 
@@ -114,7 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
               surface: Colors.white,
               onSurface: Colors.black,
             ),
-            dialogBackgroundColor: Color(0xFF101922),
+            dialogTheme: DialogThemeData(
+              backgroundColor: Color(0xFF101922),
+            )
           ),
           child: child!,
         );
@@ -132,9 +138,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _selectedDate = combinedDateTime;
         selectedTime = picked;
       });
-      print("Selected Date & Time: ${combinedDateTime.toLocal()}");
+      debugPrint("Selected Date & Time: ${combinedDateTime.toLocal()}");
     } else {
-      print("Time selection cancelled.");
+      debugPrint("Time selection cancelled.");
     }
   }
 

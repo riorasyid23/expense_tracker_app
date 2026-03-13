@@ -3,6 +3,7 @@ import 'package:expense_tracker/theme/app_colors.dart';
 import 'package:expense_tracker/theme/app_text_styles.dart';
 import 'package:expense_tracker/widgets/custom_appbar.dart';
 import 'package:expense_tracker/widgets/expense_card.dart';
+import 'package:expense_tracker/widgets/perfomance_barchart.dart';
 import 'package:expense_tracker/widgets/top_categories.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -222,8 +223,41 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
 
+              Visibility(
+                visible: expenseProvider.expenses.isNotEmpty,
+                replacement: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.textPrimary.withOpacity(0.1),
+                      width: 0.5
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.receipt_long_outlined,
+                        size: 48,
+                        color: Colors.white54,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        "No transactions recorded",
+                        style: AppTextStyles.txtSm.copyWith(
+                          color: Colors.white54,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                child: PerfomanceBarchart()
+              )
             ],
           ),
         ),
