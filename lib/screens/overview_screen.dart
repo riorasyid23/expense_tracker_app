@@ -33,7 +33,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
     final expenseWeeklyPerfomance = expenseProvider.getWeeklyPerformance(int.parse(_selectedMonth ?? "1"));
     final highestWeeklyExpense = expenseWeeklyPerfomance.reduce((a, b) => 
     a.weeklyAmount > b.weeklyAmount ? a : b);
-    final monthlyGrowth = expenseProvider.monthlyGrowth;
+    final monthlyGrowth = expenseProvider.getMonthlyGrowth(int.parse(_selectedMonth ?? "1"));
 
     
     return Scaffold(
@@ -73,23 +73,30 @@ class _OverviewScreenState extends State<OverviewScreen> {
                     children: [
                       Text(
                         "Total Spent in ",
-                        style: AppTextStyles.amountLabel,
+                        style: AppTextStyles.amountLabel.copyWith(
+                          color: AppColors.textPrimary
+                        ),
                       ),
                       DropdownButton<String>(
                         items: _months.map((month) => DropdownMenuItem<String>(
+                          enabled: (_months.indexOf(month) + 1) <= (DateTime.now().month),
                           value: (_months.indexOf(month) + 1).toString(),
                           child: Text(
                             month,
-                            style: AppTextStyles.amountLabel
+                            style: AppTextStyles.amountLabel.copyWith(
+                              color: (_months.indexOf(month) + 1) <= (DateTime.now().month) ? AppColors.textPrimary : AppColors.border
+                            )
                           ),
                         )).toList(),
                         value: _selectedMonth,
                         
                         onChanged: (value) {
-                          setState(() {
-                            _selectedMonth = value;
-                            // debugPrint("Current month number: ${getCurrentMonthNumber()}");
-                          });
+                          if(int.parse(value ?? "1") <= (DateTime.now().month)){
+                            setState(() {
+                              _selectedMonth = value;
+                              // debugPrint("Current month number: ${getCurrentMonthNumber()}");
+                            });
+                          }
                         },
                       )
 
@@ -264,7 +271,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 child: PerfomanceBarchart(
                   expenseWeeklyPerfomance: expenseWeeklyPerfomance,
                   highestWeeklyExpense: highestWeeklyExpense.weeklyAmount,
-                  monthlyGrowth: expenseProvider.monthlyGrowth,
+                  monthlyGrowth: monthlyGrowth,
                 )
               )
             ],

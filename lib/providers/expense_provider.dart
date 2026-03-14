@@ -61,7 +61,16 @@ class ExpenseProvider extends ChangeNotifier {
      notifyListeners();
   }
 
-  double getTotalExpenses({int? currentMonth = 0}) {
+  double getTotalExpenses() {
+    double total = 0;
+
+    for(var expense in _expenses){
+      total += expense.amount;
+    }
+    return total;
+  }
+
+  double getMonthlyExpense(int currentMonth){
     double total = 0;
 
     if(currentMonth != 0) {
@@ -71,14 +80,9 @@ class ExpenseProvider extends ChangeNotifier {
       }
 
       return total;
-      // notifyListeners()
     }
 
-
-    for(var expense in _expenses){
-      total += expense.amount;
-    }
-    return total;
+    return 0;
   }
 
   List<PieChartSectionData> getSections(int touchedIndex, int month) {
@@ -126,8 +130,6 @@ class ExpenseProvider extends ChangeNotifier {
       );
     }).toList();
 
-    getMonthlyGrowth();
-
     return sections;
   }
 
@@ -161,11 +163,6 @@ class ExpenseProvider extends ChangeNotifier {
     final int currentYear = DateTime.now().year;
     
 
-    // Map<String, dynamic> finalResult = {
-    //   "weeklyPerfomanceData": {},
-    //   "growth": expenseGrowth
-    // };
-
     // 1. Initialize a map for exactly 4 weeks with 0.0 amount
     Map<int, double> weeklyMap = {1: 0.0, 2: 0.0, 3: 0.0, 4: 0.0};
 
@@ -189,21 +186,20 @@ class ExpenseProvider extends ChangeNotifier {
             ))
         .toList();
 
-    // finalResult["weeklyPerfomanceData"] = result;
-    // 3. Map the results to your performance model
-    // return finalResult;
   }
 
-  void getMonthlyGrowth(){
-    final double currrentMonthExpense = getTotalExpenses(currentMonth: DateTime.now().month);
-    final double lastMonthExpense = getTotalExpenses(currentMonth: DateTime.now().month - 1);
+  double getMonthlyGrowth(int selectedMonth){
+    final double currrentMonthExpense = getMonthlyExpense(selectedMonth);
+    final double lastMonthExpense = getMonthlyExpense(selectedMonth == 1 ? 12 : selectedMonth - 1);
     double expenseGrowth = 0;
 
     if(lastMonthExpense != 0){
       expenseGrowth = ((currrentMonthExpense - lastMonthExpense) / lastMonthExpense) * 100;
+
+      return (expenseGrowth * 100).truncateToDouble() / 100;
     }
 
-    _monthlyGrowth = expenseGrowth;
-    notifyListeners();
+
+    return 0;
   }
 }

@@ -41,9 +41,12 @@ class PerfomanceBarchart extends StatelessWidget {
                 style: AppTextStyles.txtSm,
               ),
               TextButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(monthlyGrowth > 0 ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1)),
+                ),
                 onPressed: () {},
                 child: Text(
-                  "~$monthlyGrowth% vs last month",
+                  "${monthlyGrowth > 0 ? "+" : ""}$monthlyGrowth% vs last month",
                   style: AppTextStyles.txtXs,
                 ),
               )
@@ -73,67 +76,6 @@ class PerfomanceBarchart extends StatelessWidget {
                     ]
                   );
                 }).toList(),
-                // barGroups: [
-                //   BarChartGroupData(
-                //     x: 0,
-                //     barRods: [
-                //       BarChartRodData(
-                //         toY: 8,
-                        // color: Colors.orange,
-                        // width: 20,
-                        // borderRadius: BorderRadius.only(
-                        //   topLeft: Radius.circular(24),
-                        //   topRight: Radius.circular(24)
-                        // )
-                //       )
-                //     ]
-                //   ),
-
-                //   BarChartGroupData(
-                //     x: 0,
-                //     barRods: [
-                //       BarChartRodData(
-                //         toY: 8,
-                //         color: Colors.orange,
-                //         width: 20,
-                //         borderRadius: BorderRadius.only(
-                //           topLeft: Radius.circular(24),
-                //           topRight: Radius.circular(24)
-                //         )
-                //       )
-                //     ]
-                //   ),
-
-                //   BarChartGroupData(
-                //     x: 0,
-                //     barRods: [
-                //       BarChartRodData(
-                //         toY: 8,
-                //         color: Colors.orange,
-                //         width: 20,
-                //         borderRadius: BorderRadius.only(
-                //           topLeft: Radius.circular(24),
-                //           topRight: Radius.circular(24)
-                //         )
-                //       )
-                //     ]
-                //   ),
-
-                //   BarChartGroupData(
-                //     x: 3,
-                //     barRods: [
-                //       BarChartRodData(
-                //         toY: 8,
-                //         color: Colors.orange,
-                //         width: 20,
-                //         borderRadius: BorderRadius.only(
-                //           topLeft: Radius.circular(24),
-                //           topRight: Radius.circular(24)
-                //         )
-                //       )
-                //     ]
-                //   ),
-                // ],
                 titlesData: FlTitlesData(
                   show: true,
                   bottomTitles: AxisTitles(
